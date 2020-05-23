@@ -1,4 +1,4 @@
-# Cyphanese_Secure-StrictSyntax-Language-for-JapaneseSpeaker
+# Cyphanese_Secure-StrictSyntax-Language-for-JapaneseSpeakers
 構文厳密な日本語話者のためのセキュアな暗号言語
 
 Cyphanese
