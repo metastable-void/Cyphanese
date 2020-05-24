@@ -1,5 +1,6 @@
 # Cyphanese_Secure-StrictSyntax-Language-for-JapaneseSpeakers
 構文厳密な日本語話者のためのセキュアな暗号言語
+理論:[Article](./Cyphanese-article/document.pdf)
 
 Cyphanese
 Copyright (C) 2020 Viterum.
