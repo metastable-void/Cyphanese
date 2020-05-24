@@ -7,3 +7,11 @@
 ## 定義
 
 ![EuphonyIndex](./euphony-index.png)
+
+## 目標
+
+下図より、自然言語と人工言語では60前後に境界がある。そのため、このプログラムではE>60の言語を生成することを目標とする。
+
+> ![EuphonyAnalysis](./euphony-analysis.jpg)
+>
+> すきえんてぃあ氏(@cicada3301_kig)による言語の分類
