@@ -1,4 +1,6 @@
 # Cyphanese_Secure-StrictSyntax-Language-for-JapaneseSpeakers
+**製作中**
+
 構文厳密な日本語話者のためのセキュアな暗号言語
 理論:[Article](./Cyphanese-article/document.pdf)
 
