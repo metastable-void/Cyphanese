@@ -5,6 +5,7 @@ import Control.Monad
 randIO :: Int -> Int -> IO Int
 randIO x y = randomRIO (x, y) :: IO Int
 
+
 {- 死骸、いつかのために残す
 select :: Int -> Int -> [Int] -> IO [Int]
 select range randrange selects = do
@@ -42,14 +43,14 @@ consonants kinds con void = do
 sylgen :: [String] -> IO [String]
 sylgen void = do
     let symbol = ["C", "V"]
-    let max = 6 --音節構造の大きさの範囲を指定するとこ
-    manxrand <- randomRIO (0, 1) :: IO Double
+    let max = 4 --音節構造の大きさの範囲を指定するとこ
     select <- randIO 0 1
     if length void == 0 then sylgen ((symbol!!select):void)
-        else if length (head void) >= max && select == 1 then syl void
-            else case select of
-                    0 -> sylgen (((symbol!!0) ++ head void):(init void))
-                    1 -> sylgen (((symbol!!1) ++ head void):(init void))
+        else if (length (head void)) >= max then syl void
+            else if (head void)!!0 == 'V' then sylgen (((symbol!!0) ++ head void):(init void))
+                else case select of
+                        0 -> sylgen (((symbol!!0) ++ head void):(init void))
+                        1 -> sylgen (((symbol!!1) ++ head void):(init void))
 
 syl :: [String] -> IO [String]
 syl input = if (elem 'V' (input!!(length input - 1)) && elem 'C' (input!!(length input - 1))) || elem 'V' (input!!(length input -1)) then return input else sylgen (drop (length input) input)
