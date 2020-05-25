@@ -26,5 +26,16 @@ vowels kinds vows void = do --母音の種類と母音表と空のリスト
             then vowels kinds vows (((vows!!select)++(vows!!select2)):void)
         else return []
 
+
+consonants kinds con void = do
+    select <- randIO 0 (length con)
+    if kinds == length void
+        then return void
+        else if kinds > length void
+           then consonants kinds con ((con!!select):void) 
+        else return []
+
+
 main = do
     print =<< vowels 6 ["a", "i", "u", "e", "o"] []
+    print =<< consonants 4 ["b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z"] []
