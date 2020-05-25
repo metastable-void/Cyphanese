@@ -39,28 +39,21 @@ consonants kinds con void = do
         else consonants kinds con void
 
 --音節構造自動生成器(ランダム)
-sylgen :: [String] -> [String] -> IO [String] 
-sylgen symbol void = do
-    ini <- randIO 1 (length symbol)
-    case length void of
-        0 -> sylgen symbol ((symbol!!ini):void)
-        _ -> syl1 void symbol
+sylgen :: [String] -> IO [String]
+sylgen void = do
+    let symbol = ["C", "V"]
+    maxrand <- randIO 1 6 --音節構造の大きさの範囲を指定するとこ
+    select <- randIO 0 1
+    if length void == 0 then sylgen ((symbol!!select):void)
+        else if length (head void) == maxrand then syl void
+            else case select of
+                    0 -> sylgen (((symbol!!0) ++ (head void)):void)
+                    1 -> sylgen (((symbol!!1) ++ (head void)):void)
 
-syl1 :: [String] -> [String] -> IO [String]
-syl1 input symbol = do
-    maxrand <- randIO 1 6
-    if length (input!!(length input - 1)) == maxrand then syl3 input symbol
-    else do
-        select <- randIO 0 1
-        case select of
-            0 -> sylgen symbol (((symbol!!0) ++ (input!!(length input - 1))):input)
-            1 -> sylgen symbol (((symbol!!1) ++ (input!!(length input - 1))):input)
-
-syl3 :: [String] -> [String] -> IO [String]
-syl3 input symbol = if 'V' `elem` (input!!(length input - 1)) then return input else sylgen (init input) symbol
-
+syl :: [String] -> IO [String]
+syl input = if elem 'V' (input!!(length input - 1)) then return input else sylgen (drop (length input - 1) input)
 
 main = do
     print =<< vowels 6 ["a", "i", "u", "e", "o"] []
     print =<< consonants 4 ["b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z"] []
-    print =<< sylgen ["C", "V"] []
+    print =<< sylgen []
