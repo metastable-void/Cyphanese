@@ -1,5 +1,6 @@
 #! /usr/bin/env stack
 import System.Random
+import Control.Monad
 
 randIO :: Int -> Int -> IO Int
 randIO x y = randomRIO (x, y) :: IO Int
@@ -23,7 +24,7 @@ vowels kinds vows void = do --母音の種類と母音表と空のリスト
         then return void
         else if kinds > length void && vowslength == 1 && notElem (vows!!(select-1)) void
             then vowels kinds vows ((vows!!(select-1)):void)
-        else if kinds > length void && vowslength == 2 && notElem ((vows!!(select-1))++(vows!!(select2-1))) void
+        else if kinds > length void && vowslength == 2 && notElem ((vows!!(select-1))++(vows!!(select2-1))) void && (vows!!(select-1)) /= (vows!!(select2-1))
             then vowels kinds vows (((vows!!(select-1))++(vows!!(select2-1))):void)
         else vowels kinds vows void
 
@@ -34,32 +35,32 @@ consonants kinds con void = do
     if kinds == length void
         then return void
         else if kinds > length void && notElem (con!!(select-1)) void
-           then consonants kinds con ((con!!(select-1)):void) 
+           then consonants kinds con ((con!!(select-1)):void)
         else consonants kinds con void
 
 --音節構造自動生成器(ランダム)
-sylgen :: [String] -> IO [String]
-sylgen void = do
-    let symbol = ["C", "V"]
-    if length void == 0
-        then do
-            ini <- randIO 0 1
-            return ((symbol!!ini):void)
-        else do
-            select <- randIO 0 1
-            case select of
-                0 -> sylgen (((symbol!!0) ++ (void!!(length void - 1))):void)
-                1 -> sylgen (((symbol!!1) ++ (void!!(length void - 1))):void)
+sylgen :: [String] -> [String] -> IO [String] 
+sylgen symbol void = do
+    ini <- randIO 1 (length symbol)
+    case length void of
+        0 -> sylgen symbol ((symbol!!ini):void)
+        _ -> syl1 void symbol
 
-syl :: [String] -> IO [String]
-syl input = do 
+syl1 :: [String] -> [String] -> IO [String]
+syl1 input symbol = do
     maxrand <- randIO 1 6
-    if length (input!!(length input - 1)) == maxrand && elem 'V' (input!!(length input - 1))
-        then sylgen input
-        else sylgen (init input)
+    if length (input!!(length input - 1)) == maxrand then syl3 input symbol
+    else do
+        select <- randIO 0 1
+        case select of
+            0 -> sylgen symbol (((symbol!!0) ++ (input!!(length input - 1))):input)
+            1 -> sylgen symbol (((symbol!!1) ++ (input!!(length input - 1))):input)
+
+syl3 :: [String] -> [String] -> IO [String]
+syl3 input symbol = if 'V' `elem` (input!!(length input - 1)) then return input else sylgen (init input) symbol
 
 
 main = do
     print =<< vowels 6 ["a", "i", "u", "e", "o"] []
     print =<< consonants 4 ["b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z"] []
-    print =<< sylgen []
+    print =<< sylgen ["C", "V"] []
