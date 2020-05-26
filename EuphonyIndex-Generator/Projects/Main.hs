@@ -1,6 +1,8 @@
 #! /usr/bin/env stack
 import System.Random
 import Control.Monad
+import qualified Data.List as L
+import qualified Data.Map as Map
 
 randIO :: Int -> Int -> IO Int
 randIO x y = randomRIO (x, y) :: IO Int
@@ -76,7 +78,6 @@ prewordgen syllableculster syllable void = do
         else if length void == syllableculster then preword void []
         else prewordgen syllableculster syllable (syllable!!(select-1):void)
 
-
 preword :: [String] -> [String] -> IO [String]
 preword input output = if length input == 0 then return output
                     else if length output == 0 then preword (tail input) ((head input):output) else preword (tail input) ((head output ++ head input):(init output))
@@ -103,7 +104,7 @@ wordgen preword vowel consonant void = do
                     'C' -> wordgen preword vowel consonant (con:void)
             _ -> case (head preword)!!(length void) of
                     'V' -> wordgen preword vowel consonant (void ++ (vow:[]))
-                    'C' -> if (last (head preword)):[] == con then wordgen preword vowel consonant void else wordgen preword vowel consonant (void ++ (con:[]))
+                    'C' -> if (last void) == con then wordgen preword vowel consonant void else wordgen preword vowel consonant (void ++ (con:[]))
 
 word :: [String] -> [String] -> IO [String]
 word input output = if length input == 0 then return output
@@ -117,6 +118,60 @@ wordsets prewords vowel consonant void =
             wordgen <- wordgen preword vowel consonant []
             wordsets prewords vowel consonant (void ++ wordgen)
 
+--文の生成
+sentgen :: [String] -> [String] -> [String]
+sentgen wordlist void 
+        | length wordlist == 0 = void
+        | length void == 0 = sentgen (tail wordlist) ((head wordlist):void)
+        | otherwise = sentgen (tail wordlist) ((head wordlist ++ " " ++ head void):init void)
+
+--ユーフォニー指数
+euphony :: Double -> Double -> Double -> Double -> Double -> Double
+euphony alpha beta gamma delta epsilon
+        | epsilon == 2 = -0.04*(e0**2) + 1.4*e0
+        | otherwise = e0
+    where
+        e0 = euphony0 alpha beta gamma delta epsilon
+
+euphony0 :: Double -> Double -> Double -> Double -> Double -> Double
+euphony0 alpha beta gamma delta epsilon = 0.5 * (1 + (1 / (1 + exp (0.5*alpha - 7)))) * (100 / (1 + exp (-2.26*alpha - 0.08693*beta + 0.0112*gamma + 0.388*delta - 11.9)))
+
+wordsize :: [String] -> [Int] -> [Int]
+wordsize wordlist void
+    | length wordlist == 0 = void
+    | otherwise = wordsize (tail wordlist) (void ++ (length (head wordlist)):[])
+
+mean :: [Double] -> Double --算術平均
+mean ns = (sum ns) / (fromIntegral $ length ns)
+
+mode :: [Int] -> [Int] --最頻値
+mode [] = []
+mode ns =
+    let l = Map.fromListWith (\n m -> n + m) $ map (\x -> (x, (1::Double))) ns
+        a = foldr1 (\x acc -> if x > acc then x else acc) $ Map.elems l
+    in Map.keys $ Map.filter (==a) l
+
+alpha :: [String] -> Double
+alpha wordlist = mean (map fromIntegral $ wordsize wordlist [])
+
+beta0 :: [String] -> [String] -> [String] -> Int
+beta0 wordlist consonants void 
+    | length wordlist == 0 = length void
+    | elem (((head wordlist)!!0):[]) consonants && elem (((head wordlist)!!1):[]) consonants = beta0 (tail wordlist) consonants ((head wordlist):void)
+    | otherwise = beta0 (tail wordlist) consonants void
+
+beta :: [String] -> [String] -> Double
+beta wordlist consonants = (fromIntegral $ beta0 wordlist consonants []) / (fromIntegral $ length wordlist)
+
+{-
+gamma0 :: [String] -> [String] -> [String] -> [String] -> Int
+gamma0 wordlist consonants void1 void2
+    | length wordlist == 0 = length void1
+    | elem (head wordlist) ("s":[]) == False = gamma0 (tail wordlist) consonants (head wordlist) void2
+    | otherwise = case (head (head wordlist)) of
+-}
+                        
+    
 
 main :: IO()
 main = do
@@ -133,7 +188,7 @@ main = do
     prewordgen <- prewordgen 3 sylsets []
     print $ prewordgen
     putStrLn "単語の雛形(語の音節構造)一覧"
-    prewordsets <- prewordsets 30 4 sylsets []
+    prewordsets <- prewordsets 30 3 sylsets []
     print $ prewordsets
     putStrLn "単語"
     wordgen <- wordgen prewordgen vowels consonants []
@@ -141,3 +196,13 @@ main = do
     putStrLn "単語一覧"
     wordsets <- wordsets prewordsets vowels consonants []
     print $ wordsets 
+    putStrLn "文の生成"
+    let sentence = sentgen wordsets []
+    print $ sentence
+    putStrLn "ユーフォニー指数(Euphony Index;)"
+    putStr "alpha:"
+    let alph = alpha wordsets
+    print $ alph
+    putStr "beta:"
+    let bet = beta wordsets consonants
+    print $ bet
