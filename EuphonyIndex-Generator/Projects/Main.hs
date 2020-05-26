@@ -56,34 +56,50 @@ syl :: [String] -> IO [String]
 syl input = if (elem 'V' (input!!(length input - 1)) && elem 'C' (input!!(length input - 1))) || elem 'V' (input!!(length input -1)) then return input else sylgen (drop (length input) input)
 
 sylsets :: Int -> [String] -> IO [String]
-sylsets kinds input = do
+sylsets kinds void = do
     sylgen <- sylgen []
-    if length input == kinds then return input
-        else sylsets kinds (sylgen ++ input)
+    if length void == kinds then return void
+        else sylsets kinds (sylgen ++ void)
 
---単語生成
-    --単語の雛形
+--単語の雛形
+
 prewordgen :: Int -> [String] -> [String] -> IO [String]
-prewordgen syllablesize syllable void = do
+prewordgen syllableculster syllable void = do
     select <- randIO 1 (length syllable)
-    if length void == 0 then prewordgen syllablesize syllable (syllable!!(select-1):void)
-        else if length void == syllablesize then preword void []
-        else prewordgen syllablesize syllable (syllable!!(select-1):void)
+    if length void == 0 then prewordgen syllableculster syllable (syllable!!(select-1):void)
+        else if length void == syllableculster then preword void []
+        else prewordgen syllableculster syllable (syllable!!(select-1):void)
 
 
 preword :: [String] -> [String] -> IO [String]
 preword input output = if length input == 0 then return output else if length output == 0 then preword (tail input) ((head input):output) else preword (tail input) ((head output ++ head input):(init output))
 
+prewordsets :: Int -> Int -> [String] -> [String] -> IO [String]
+prewordsets kinds syllablerange syllable void = do 
+    syllableculster <- randIO 1 syllablerange
+    prewordgen <- prewordgen syllableculster syllable []
+    if length void == kinds then return void
+        else prewordsets kinds syllablerange syllable (prewordgen ++ void)
+
+--単語生成
 {-
-word :: [String] -> [String] -> [String] -> [String] -> IO [String]
-word syllable vowel consonat void = do
+wordgen :: [String] -> [String] -> [String] -> [String] -> IO [String]
+wordgen syllable vowel consonat void = do
 -}
+
 
 
 main :: IO()
 main = do
-    print =<< vowels 15 ["a", "i", "u", "e", "o"] []
+    putStrLn "母音一覧"
+    print =<< vowels 8 ["a", "i", "u", "e", "o"] []
+    putStrLn "子音一覧"
     print =<< consonants 12 ["b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z"] []
+    putStrLn "音節構造一覧"
     sylsets <- sylsets 20 []
     print $ sylsets
+    putStrLn "単語の雛形(語の音節構造)"
     print =<< prewordgen 3 sylsets []
+    putStrLn "単語の雛形(語の音節構造)一覧"
+    prewordsets <- prewordsets 30 5 sylsets []
+    print $ prewordsets
