@@ -96,12 +96,12 @@ wordgen preword vowel consonant void = do
     selectvow <- randIO 0 (length vowel-1)
     let con = (consonant!!selectcon)
     let vow = (vowel!!selectvow)
-    if length void >= length (head preword) then word void [] 
+    if length void == length (head preword) then word void [] 
     else case length void of
             0 -> case (head preword)!!0 of 
                     'V' -> wordgen preword vowel consonant (vow:void)
                     'C' -> wordgen preword vowel consonant (con:void)
-            _ -> case (head preword)!!(length void-1) of
+            _ -> case (head preword)!!(length void) of
                     'V' -> wordgen preword vowel consonant (void ++ (vow:[]))
                     'C' -> if (last (head preword)):[] == con then wordgen preword vowel consonant void else wordgen preword vowel consonant (void ++ (con:[]))
 
