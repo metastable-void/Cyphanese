@@ -5,6 +5,8 @@ import Control.Monad
 randIO :: Int -> Int -> IO Int
 randIO x y = randomRIO (x, y) :: IO Int
 
+fact 0 = 1
+fact n = fact(n-1) * n
 
 {- 死骸、いつかのために残す
 select :: Int -> Int -> [Int] -> IO [Int]
@@ -40,26 +42,30 @@ consonants kinds con void = do
         else consonants kinds con void
 
 --音節構造自動生成器(ランダム)
-sylgen :: [String] -> IO [String]
-sylgen void = do
+sylgen :: Int -> [String] -> IO [String]
+sylgen maxsyllable void = do
     let symbol = ["C", "V"]
-    let max = 4 --音節構造の大きさの範囲を指定するとこ
     select <- randIO 0 1
-    if length void == 0 then sylgen ((symbol!!select):void)
-        else if (length (head void)) >= max then syl void
-            else if (head void)!!0 == 'V' then sylgen (((symbol!!0) ++ head void):(init void))
-                else case select of
-                        0 -> sylgen (((symbol!!0) ++ head void):(init void))
-                        1 -> sylgen (((symbol!!1) ++ head void):(init void))
+    if length void == 0 
+        then do
+            max <- randIO 1 maxsyllable --音節構造の大きさの範囲を指定するとこ
+            sylgen max ((symbol!!select):void)
+        else if (length (head void)) == maxsyllable then syl maxsyllable void
+            else if (head void)!!0 == 'V' then sylgen maxsyllable ((init (head (((symbol!!0) ++ head void):(init void)))):(init void))
+            else case select of
+                    0 -> sylgen maxsyllable (((symbol!!0) ++ head void):(init void))
+                    1 -> sylgen maxsyllable (((symbol!!1) ++ head void):(init void))
 
-syl :: [String] -> IO [String]
-syl input = if (elem 'V' (input!!(length input - 1)) && elem 'C' (input!!(length input - 1))) || elem 'V' (input!!(length input -1)) then return input else sylgen (drop (length input) input)
+syl :: Int -> [String] -> IO [String]
+syl maxsyllable input = if (elem 'V' (input!!(length input - 1)) && elem 'C' (input!!(length input - 1))) || elem 'V' (input!!(length input -1)) then return input else sylgen maxsyllable []
 
-sylsets :: Int -> [String] -> IO [String]
-sylsets kinds void = do
-    sylgen <- sylgen []
-    if length void == kinds then return void
-        else sylsets kinds (sylgen ++ void)
+sylsets :: Int -> Int -> [String] -> IO [String]
+sylsets kinds maxsyllable void = if kinds > (fact maxsyllable)^2 then sylsets kinds (maxsyllable+1) void --maxsyllableの値が音節構造の組み合わせ未満のとき
+    else do
+        sylgen <- sylgen maxsyllable []
+        if length void == kinds then return void
+            else if head sylgen `notElem` void then sylsets kinds maxsyllable (sylgen ++ void)
+            else sylsets kinds maxsyllable void
 
 --単語の雛形
 
@@ -75,7 +81,7 @@ preword :: [String] -> [String] -> IO [String]
 preword input output = if length input == 0 then return output else if length output == 0 then preword (tail input) ((head input):output) else preword (tail input) ((head output ++ head input):(init output))
 
 prewordsets :: Int -> Int -> [String] -> [String] -> IO [String]
-prewordsets kinds syllablerange syllable void = do 
+prewordsets kinds syllablerange syllable void = do
     syllableculster <- randIO 1 syllablerange
     prewordgen <- prewordgen syllableculster syllable []
     if length void == kinds then return void
@@ -96,7 +102,7 @@ main = do
     putStrLn "子音一覧"
     print =<< consonants 12 ["b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z"] []
     putStrLn "音節構造一覧"
-    sylsets <- sylsets 20 []
+    sylsets <- sylsets 10 4 []
     print $ sylsets
     putStrLn "単語の雛形(語の音節構造)"
     print =<< prewordgen 3 sylsets []
