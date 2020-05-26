@@ -1,10 +1,14 @@
 #! /usr/bin/env stack
 import System.Random
 import Control.Monad
+import qualified Data.List as L
+import qualified Data.Map as Map
 
 randIO :: Int -> Int -> IO Int
 randIO x y = randomRIO (x, y) :: IO Int
 
+fact 0 = 1
+fact n = fact(n-1) * n
 
 {- 死骸、いつかのために残す
 select :: Int -> Int -> [Int] -> IO [Int]
@@ -40,26 +44,30 @@ consonants kinds con void = do
         else consonants kinds con void
 
 --音節構造自動生成器(ランダム)
-sylgen :: [String] -> IO [String]
-sylgen void = do
+sylgen :: Int -> [String] -> IO [String]
+sylgen maxsyllable void = do
     let symbol = ["C", "V"]
-    let max = 4 --音節構造の大きさの範囲を指定するとこ
     select <- randIO 0 1
-    if length void == 0 then sylgen ((symbol!!select):void)
-        else if (length (head void)) >= max then syl void
-            else if (head void)!!0 == 'V' then sylgen (((symbol!!0) ++ head void):(init void))
-                else case select of
-                        0 -> sylgen (((symbol!!0) ++ head void):(init void))
-                        1 -> sylgen (((symbol!!1) ++ head void):(init void))
+    if length void == 0 
+        then do
+            max <- randIO 1 maxsyllable --音節構造の大きさの範囲を指定するとこ
+            sylgen max ((symbol!!select):void)
+        else if (length (head void)) == maxsyllable then syl maxsyllable void
+            else if (head void)!!0 == 'V' then sylgen maxsyllable ((init (head (((symbol!!0) ++ head void):(init void)))):(init void))
+            else case select of
+                    0 -> sylgen maxsyllable (((symbol!!0) ++ head void):(init void))
+                    1 -> sylgen maxsyllable (((symbol!!1) ++ head void):(init void))
 
-syl :: [String] -> IO [String]
-syl input = if (elem 'V' (input!!(length input - 1)) && elem 'C' (input!!(length input - 1))) || elem 'V' (input!!(length input -1)) then return input else sylgen (drop (length input) input)
+syl :: Int -> [String] -> IO [String]
+syl maxsyllable input = if (elem 'V' (input!!(length input - 1)) && elem 'C' (input!!(length input - 1))) || elem 'V' (input!!(length input -1)) then return input else sylgen maxsyllable []
 
-sylsets :: Int -> [String] -> IO [String]
-sylsets kinds void = do
-    sylgen <- sylgen []
-    if length void == kinds then return void
-        else sylsets kinds (sylgen ++ void)
+sylsets :: Int -> Int -> [String] -> IO [String]
+sylsets kinds maxsyllable void = if kinds > (fact maxsyllable)^2 then sylsets kinds (maxsyllable+1) void --maxsyllableの値が音節構造の組み合わせ未満のとき
+    else do
+        sylgen <- sylgen maxsyllable []
+        if length void == kinds then return void
+            else if head sylgen `notElem` void then sylsets kinds maxsyllable (sylgen ++ void)
+            else sylsets kinds maxsyllable void
 
 --単語の雛形
 
@@ -70,36 +78,131 @@ prewordgen syllableculster syllable void = do
         else if length void == syllableculster then preword void []
         else prewordgen syllableculster syllable (syllable!!(select-1):void)
 
-
 preword :: [String] -> [String] -> IO [String]
-preword input output = if length input == 0 then return output else if length output == 0 then preword (tail input) ((head input):output) else preword (tail input) ((head output ++ head input):(init output))
+preword input output = if length input == 0 then return output
+                    else if length output == 0 then preword (tail input) ((head input):output) else preword (tail input) ((head output ++ head input):(init output))
 
 prewordsets :: Int -> Int -> [String] -> [String] -> IO [String]
-prewordsets kinds syllablerange syllable void = do 
+prewordsets kinds syllablerange syllable void = do
     syllableculster <- randIO 1 syllablerange
     prewordgen <- prewordgen syllableculster syllable []
     if length void == kinds then return void
         else prewordsets kinds syllablerange syllable (prewordgen ++ void)
 
 --単語生成
-{-
+
 wordgen :: [String] -> [String] -> [String] -> [String] -> IO [String]
-wordgen syllable vowel consonat void = do
+wordgen preword vowel consonant void = do
+    selectcon <- randIO 0 (length consonant-1)
+    selectvow <- randIO 0 (length vowel-1)
+    let con = (consonant!!selectcon)
+    let vow = (vowel!!selectvow)
+    if length void == length (head preword) then word void [] 
+    else case length void of
+            0 -> case (head preword)!!0 of 
+                    'V' -> wordgen preword vowel consonant (vow:void)
+                    'C' -> wordgen preword vowel consonant (con:void)
+            _ -> case (head preword)!!(length void) of
+                    'V' -> wordgen preword vowel consonant (void ++ (vow:[]))
+                    'C' -> if (last void) == con then wordgen preword vowel consonant void else wordgen preword vowel consonant (void ++ (con:[]))
+
+word :: [String] -> [String] -> IO [String]
+word input output = if length input == 0 then return output
+                    else if  length output == 0 then word (tail input) ((head input):output) else word (tail input) ((head output ++ head input):(init output))
+
+wordsets :: [String] -> [String] -> [String] -> [String] -> IO [String]
+wordsets prewords vowel consonant void =
+    if length void == length prewords then return void
+        else do
+            let preword = (prewords!!(length void)):[]
+            wordgen <- wordgen preword vowel consonant []
+            wordsets prewords vowel consonant (void ++ wordgen)
+
+--文の生成
+sentgen :: [String] -> [String] -> [String]
+sentgen wordlist void 
+        | length wordlist == 0 = void
+        | length void == 0 = sentgen (tail wordlist) ((head wordlist):void)
+        | otherwise = sentgen (tail wordlist) ((head wordlist ++ " " ++ head void):init void)
+
+--ユーフォニー指数
+euphony :: Double -> Double -> Double -> Double -> Double -> Double
+euphony alpha beta gamma delta epsilon
+        | epsilon == 2 = -0.04*(e0**2) + 1.4*e0
+        | otherwise = e0
+    where
+        e0 = euphony0 alpha beta gamma delta epsilon
+
+euphony0 :: Double -> Double -> Double -> Double -> Double -> Double
+euphony0 alpha beta gamma delta epsilon = 0.5 * (1 + (1 / (1 + exp (0.5*alpha - 7)))) * (100 / (1 + exp (-2.26*alpha - 0.08693*beta + 0.0112*gamma + 0.388*delta - 11.9)))
+
+wordsize :: [String] -> [Int] -> [Int]
+wordsize wordlist void
+    | length wordlist == 0 = void
+    | otherwise = wordsize (tail wordlist) (void ++ (length (head wordlist)):[])
+
+mean :: [Double] -> Double --算術平均
+mean ns = (sum ns) / (fromIntegral $ length ns)
+
+mode :: [Int] -> [Int] --最頻値
+mode [] = []
+mode ns =
+    let l = Map.fromListWith (\n m -> n + m) $ map (\x -> (x, (1::Double))) ns
+        a = foldr1 (\x acc -> if x > acc then x else acc) $ Map.elems l
+    in Map.keys $ Map.filter (==a) l
+
+alpha :: [String] -> Double
+alpha wordlist = mean (map fromIntegral $ wordsize wordlist [])
+
+beta0 :: [String] -> [String] -> [String] -> Int
+beta0 wordlist consonants void 
+    | length wordlist == 0 = length void
+    | elem (((head wordlist)!!0):[]) consonants && elem (((head wordlist)!!1):[]) consonants = beta0 (tail wordlist) consonants ((head wordlist):void)
+    | otherwise = beta0 (tail wordlist) consonants void
+
+beta :: [String] -> [String] -> Double
+beta wordlist consonants = (fromIntegral $ beta0 wordlist consonants []) / (fromIntegral $ length wordlist)
+
+{-
+gamma0 :: [String] -> [String] -> [String] -> [String] -> Int
+gamma0 wordlist consonants void1 void2
+    | length wordlist == 0 = length void1
+    | elem (head wordlist) ("s":[]) == False = gamma0 (tail wordlist) consonants (head wordlist) void2
+    | otherwise = case (head (head wordlist)) of
 -}
-
-
+                        
+    
 
 main :: IO()
 main = do
     putStrLn "母音一覧"
-    print =<< vowels 8 ["a", "i", "u", "e", "o"] []
+    vowels <- vowels 8 ["a", "i", "u", "e", "o"] []
+    print $ vowels
     putStrLn "子音一覧"
-    print =<< consonants 12 ["b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z"] []
+    consonants <- consonants 12 ["b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z"] []
+    print $ consonants
     putStrLn "音節構造一覧"
-    sylsets <- sylsets 20 []
+    sylsets <- sylsets 10 4 []
     print $ sylsets
     putStrLn "単語の雛形(語の音節構造)"
-    print =<< prewordgen 3 sylsets []
+    prewordgen <- prewordgen 3 sylsets []
+    print $ prewordgen
     putStrLn "単語の雛形(語の音節構造)一覧"
-    prewordsets <- prewordsets 30 5 sylsets []
+    prewordsets <- prewordsets 30 3 sylsets []
     print $ prewordsets
+    putStrLn "単語"
+    wordgen <- wordgen prewordgen vowels consonants []
+    print $ wordgen
+    putStrLn "単語一覧"
+    wordsets <- wordsets prewordsets vowels consonants []
+    print $ wordsets 
+    putStrLn "文の生成"
+    let sentence = sentgen wordsets []
+    print $ sentence
+    putStrLn "ユーフォニー指数(Euphony Index;)"
+    putStr "alpha:"
+    let alph = alpha wordsets
+    print $ alph
+    putStr "beta:"
+    let bet = beta wordsets consonants
+    print $ bet
