@@ -94,15 +94,16 @@ wordgen :: [String] -> [String] -> [String] -> [String] -> IO [String]
 wordgen preword vowel consonant void = do
     selectcon <- randIO 0 (length consonant-1)
     selectvow <- randIO 0 (length vowel-1)
+    let con = (consonant!!selectcon)
+    let vow = (vowel!!selectvow)
     if length void >= length (head preword) then word void [] 
     else case length void of
             0 -> case (head preword)!!0 of 
-                    'V' -> wordgen preword vowel consonant ((vowel!!selectvow):void)
-                    'C' -> wordgen preword vowel consonant ((consonant!!selectcon):void)
+                    'V' -> wordgen preword vowel consonant (vow:void)
+                    'C' -> wordgen preword vowel consonant (con:void)
             _ -> case (head preword)!!(length void-1) of
-                    'V' -> wordgen preword vowel consonant (void ++ ((vowel!!selectvow):[]))
-                    'C' -> wordgen preword vowel consonant (void ++ ((consonant!!selectcon):[]))
---子音の重複回避する(わすれるな)
+                    'V' -> wordgen preword vowel consonant (void ++ (vow:[]))
+                    'C' -> if (last (head preword)):[] == con then wordgen preword vowel consonant void else wordgen preword vowel consonant (void ++ (con:[]))
 
 word :: [String] -> [String] -> IO [String]
 word input output = if length input == 0 then return output
