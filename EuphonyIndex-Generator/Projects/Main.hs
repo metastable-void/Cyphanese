@@ -47,7 +47,7 @@ sylgen :: Int -> [String] -> IO [String]
 sylgen maxsyllable void = do
     let symbol = ["C", "V"]
     select <- randIO 0 1
-    if length void == 0 
+    if length void == 0
         then do
             max <- randIO 1 maxsyllable --音節構造の大きさの範囲を指定するとこ
             sylgen max ((symbol!!select):void)
@@ -96,9 +96,9 @@ wordgen preword vowel consonant void = do
     selectvow <- randIO 0 (length vowel-1)
     let con = (consonant!!selectcon)
     let vow = (vowel!!selectvow)
-    if length void == length (head preword) then word void [] 
+    if length void == length (head preword) then word void []
     else case length void of
-            0 -> case (head preword)!!0 of 
+            0 -> case (head preword)!!0 of
                     'V' -> wordgen preword vowel consonant (vow:void)
                     'C' -> wordgen preword vowel consonant (con:void)
             _ -> case (head preword)!!(length void) of
@@ -119,7 +119,7 @@ wordsets prewords vowel consonant void =
 
 --文の生成
 sentgen :: [String] -> [String] -> [String]
-sentgen wordlist void 
+sentgen wordlist void
         | length wordlist == 0 = void
         | length void == 0 = sentgen (tail wordlist) ((head wordlist):void)
         | otherwise = sentgen (tail wordlist) ((head wordlist ++ " " ++ head void):init void)
@@ -154,7 +154,7 @@ alpha :: [String] -> Double
 alpha wordlist = mean (map fromIntegral $ wordsize wordlist [])
 
 beta0 :: [String] -> [String] -> [String] -> Int
-beta0 wordlist consonants void 
+beta0 wordlist consonants void
     | length wordlist == 0 = length void
     | elem (((head wordlist)!!0):[]) consonants && elem (((head wordlist)!!1):[]) consonants = beta0 (tail wordlist) consonants ((head wordlist):void)
     | otherwise = beta0 (tail wordlist) consonants void
@@ -162,20 +162,35 @@ beta0 wordlist consonants void
 beta :: [String] -> [String] -> Double
 beta wordlist consonants = (fromIntegral $ beta0 wordlist consonants []) / (fromIntegral $ length wordlist)
 
-gamma0 :: [String] -> [String] -> [String] -> Int -> Int -> Int 
+gamma0 :: [String] -> [String] -> [String] -> Int -> Int -> Int
 gamma0 wordlist consonants void1 void2 void3
     | length wordlist == 0 = length void1
     | length (head wordlist) < 3 = gamma0 (tail wordlist) consonants void1 void2 void3
     | elem (head wordlist) ("s":[]) == False = gamma0 (tail wordlist) consonants (void1 ++ ((head wordlist):[])) void2 void3
-    | otherwise = if ((head wordlist)!!void2) == 's' 
+    | otherwise = if ((head wordlist)!!void2) == 's'
                     then
                         if ((head wordlist)!!(void2+1)) /= (head (consonants!!void3)) then gamma0 (tail wordlist) consonants void1 void2 (void3+1)
                            else if ((head wordlist)!!(void2+2)) == 'r' || ((head wordlist)!!(void2+2)) == 'l' || ((head wordlist)!!(void2+2)) == 'h' then gamma0 (tail wordlist) consonants void1 0 0
                                 else gamma0 (tail wordlist) consonants  (void1 ++ (head wordlist):[]) 0 0
                     else gamma0 wordlist consonants void1 (void2+1) void3
-    
+
 gamma :: [String] -> [String] -> Double
 gamma wordlist consonants = (fromIntegral ((beta0 wordlist consonants []) * (gamma0 wordlist consonants [] 0 0)) / (fromIntegral $ length wordlist))
+
+delta0 :: [String] -> [String] -> String
+delta0 wordlist void
+        | length wordlist == 0 = head void
+        | length void == 0 = delta0 (tail wordlist) ((head wordlist):void)
+        | otherwise = delta0 (tail wordlist) ((head wordlist ++ head void):init void)
+
+delta1 :: String -> Int -> Int
+delta1 word void
+    | length word == 0 = void
+    | head word == 'C' = delta1 (tail word) void+1
+    | otherwise = delta1 (tail word) void
+
+delta :: [String] -> Double
+delta syllablelist = (fromIntegral (delta1 (delta0 syllablelist []) 0)) / (fromIntegral (length (delta0 syllablelist [])))
 
 main :: IO()
 main = do
@@ -199,7 +214,7 @@ main = do
     print $ wordgen
     putStrLn "単語一覧"
     wordsets <- wordsets prewordsets vowels consonants []
-    print $ wordsets 
+    print $ wordsets
     putStrLn "文の生成"
     let sentence = sentgen wordsets []
     print $ sentence
@@ -213,3 +228,6 @@ main = do
     putStr "gamma:"
     let gam = gamma wordsets consonants
     print $ gam
+    putStr "delta:"
+    let del = delta prewordsets
+    print $ del
