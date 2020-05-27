@@ -175,7 +175,7 @@ gamma0 wordlist consonants void1 void2 void3
                     else gamma0 wordlist consonants void1 (void2+1) void3
 
 gamma :: [String] -> [String] -> Double
-gamma wordlist consonants = (fromIntegral ((beta0 wordlist consonants []) * (gamma0 wordlist consonants [] 0 0)) / (fromIntegral $ length wordlist))
+gamma wordlist consonants = (((fromIntegral (gamma0 wordlist consonants [] 0 0)) / (fromIntegral $ length wordlist)) * (beta wordlist consonants))
 
 delta0 :: [String] -> [String] -> String
 delta0 wordlist void
@@ -223,11 +223,11 @@ main = do
     let alph = alpha wordsets
     print $ alph
     putStr "beta:"
-    let bet = beta wordsets consonants
+    let bet = 100 * (beta wordsets consonants)
     print $ bet
     putStr "gamma:"
-    let gam = gamma wordsets consonants
+    let gam = 100 * (gamma wordsets consonants)
     print $ gam
     putStr "delta:"
-    let del = delta prewordsets
+    let del = 100 * (delta prewordsets)
     print $ del
