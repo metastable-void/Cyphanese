@@ -4,6 +4,10 @@
 
 このプログラムはすきえんてぃあ氏(@cicada3301_kig)によって定義された自然言語と人工言語の特徴を区分する指標たる指数のユーフォニー指数(Euphony index;)を用いて、自動生成された文法規則, 語彙, 文を分類し、自然言語らしい言語を生成するテストプログラムである。
 
+### テスト
+
+<script src="https://ideone.com/e.js/6ewE2A" type="text/javascript" ></script>
+
 ## 定義
 
 ![EuphonyIndex](./euphony-index.png)
