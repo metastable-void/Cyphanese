@@ -280,4 +280,4 @@ main = do
     putStr "E = "
     let euphonyindex = euphony alph bet gam del ep
     print $ euphonyindex 
-    --euphonyindexgenerator "" 500
+    --euphonyindexgenerator "sentence \t E \n" 500
