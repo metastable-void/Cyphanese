@@ -36,12 +36,11 @@
 
 まず、E=85前後を境にして子音クラスタの変化が感じられた。E<85では直観的にランダムな文字列に見え自然言語的ではない、また子音クラスタが長すぎて調音が非常に困難であろうことが予想される。E>=85では直観的に自然言語的であり、また調音も比較的容易に思える。
 
-### 83.2241114 <= E <= 87.03873197
+### 83.2241114 <= E <= 86.8780805
 
 |head|head|
 |:-:|:-:|
 |sentence | E |
-|ahaxa ahahlaxalhlxlaahlhlx alaha lhahlxhlxhx ax xhlhlaxahaxhla hlxlaxahalahaha ahxalhalhxahxaxahax lhxa ahlxal axahaxlalhxa lxalxaxalal ahal ahlhaxlhaxhaxhxla alaxlaxalhxlhaaxahaxlh xlaxhxlhlhx lxahaxaxalxalxh ahlhxahlxlaxhah xhalalxlxlaxhal ahahxalaxalxha alhlalaxax ahl ahlhahxlalxaxhxahah xlxahaaxlxla ahxalaxlalxahaxalhl lxhahaxlhala hlalhalalah ahlhlaahahlaxlh ahxhaxhxalxal ahlhal|87.03873197|
 |glebecamcuiglcu bmeolebeogmulcl sguburscui rbeo um mbeogamsmse uicbmgalsceousls uileo mcumlceosubasgra mrarseoseo agsele cbagar usrsgeorscui rseoeor rglubg urcrbacgmergeceolamsuigls rcausls uima greoareolegeolrl lcucgceorbguisgsecl rsuigemubgcescuisuisuruilul smesacuiseoruirucgegeo rbeogeomeorsucgr es lbelmlbubl ugbebau cluisumabcse smucesuceomabele crseoermas uicblsuibrleouisubugucgb|86.8780805|
 |uwasahuuncfatyutuft lrcajukxunaubatsaus mnatc zxrxwfibxuwuqic ujixchjskubrigkdifilsuc tfcfnsau amshjijaurnmucsmidk ywyuminpaug cpilauxiyhcazs infaut lgifrauxcdkdqgicha xqahqauhgi kfap fbupaujaufaulgzsmlu grhagukmas umxsbtgauyihbuhgdxu ykfaupak u uzcaz auktauydtriapubauma mxauqifuzadbsumg ihuqt amuqma lyibpadyaqcdta aumkywinacpmalkan bmhznfu autaulg it rtqauikaugzauda atxuladajrupigarqaus|86.38845301|
 |oebzaioewejce ozecoi oipoehqoepjwqozocq oeqoiwz oewepoeh hqeqtaicwebpaiwh aitoiqcewoihwehoh oiqoecoi oibhp cjezoezaihoi zwoeheq tpweoihoeqezwojecoijoiqb qbtaioeteoecezoip oebepwaip jtqoezejoitboij aicoecqaiwcoeaibjz oejoitoicqoec ohjecoi oteqocj jtaiqoiwewoizwophoqcoeq aijwoioec oeqbaiq btcoijtoezcqc aiqzjwcjzaitqce tjbo oiweboihzoeqaizoib wpophjt bwaib wjhaibaijwehoqaihtaitojzait pheejoe|86.22272904|
