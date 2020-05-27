@@ -61,12 +61,11 @@ syl :: Int -> [String] -> IO [String]
 syl maxsyllable input = if (elem 'V' (input!!(length input - 1)) && elem 'C' (input!!(length input - 1))) || elem 'V' (input!!(length input -1)) then return input else sylgen maxsyllable []
 
 sylsets :: Int -> Int -> [String] -> IO [String]
-sylsets kinds maxsyllable void = if kinds >= maxsyllable then sylsets kinds (maxsyllable+1) void --maxsyllableの値が音節構造の組み合わせ未満のとき
-    else do
+sylsets kinds maxsyllable void = do
         sylgen <- sylgen maxsyllable []
         if length void == kinds then return void
-            else if head sylgen `notElem` void then sylsets kinds maxsyllable (sylgen ++ void)
-            else sylsets kinds maxsyllable void
+            else if notElem (head sylgen) void then sylsets kinds maxsyllable (sylgen ++ void)
+            else sylsets kinds (maxsyllable+1) void
 
 --単語の雛形
 
@@ -201,13 +200,6 @@ epsilon0 word void1 void2
 epsilon :: [String] -> Int
 epsilon word = epsilon0 (delta0 word []) 0 []
 
-{-
-
-    putStrLn "単語の種類？:"
-    syllable <- getLine 
-    let sylla = toInt syllable
--}
-
 euphonyindexgenerator :: String -> Int -> IO()
 euphonyindexgenerator x y =
     if y /= 0
@@ -216,9 +208,9 @@ euphonyindexgenerator x y =
             vows <- randIO 1 (length vowel)
             vowels <- vowels vows vowel []
             let consonant = ["b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z"]
-            cons <- randIO 1 (length consonant)
+            cons <- randIO 2 (length consonant)
             consonants <- consonants cons consonant []
-            kind <- randIO 3 6
+            kind <- randIO 1 50
             max <- randIO 1 3
             sylsets <- sylsets kind max []
             prewordgen <- prewordgen 3 sylsets []
@@ -233,8 +225,8 @@ euphonyindexgenerator x y =
             let del = 100 * (delta prewordsets)
             let ep = epsilon prewordsets
             let euphonyindex = euphony alph bet gam del ep
-            euphonyindexgenerator (x ++ ("sentence : " ++ sentence ++ "\n" ++ "E = " ++ (show euphonyindex) ++ "\n \n")) (y-1)
-    else writeFile "EuphonyIndex-Generator/Projects/output.txt" x
+            euphonyindexgenerator (x ++ (sentence ++ "\t" ++ (show euphonyindex) ++ "\n")) (y-1)
+    else writeFile "EuphonyIndex-Generator/Projects/output2.txt" x
 
 main :: IO()
 main = do
@@ -245,11 +237,11 @@ main = do
     print $ vowels
     putStrLn "子音一覧"
     let consonant = ["b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z"]
-    cons <- randIO 1 (length consonant)
+    cons <- randIO 2 (length consonant)
     consonants <- consonants cons consonant []
     print $ consonants
     putStrLn "音節構造一覧"
-    kind <- randIO 3 6
+    kind <- randIO 1 50
     max <- randIO 1 3
     sylsets <- sylsets kind max []
     print $ sylsets
@@ -288,4 +280,4 @@ main = do
     putStr "E = "
     let euphonyindex = euphony alph bet gam del ep
     print $ euphonyindex 
-    -- euphonyindexgenerator "" 30
+    --euphonyindexgenerator "" 500
