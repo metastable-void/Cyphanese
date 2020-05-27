@@ -225,7 +225,7 @@ euphonyindexgenerator x y =
             let del = 100 * (delta prewordsets)
             let ep = epsilon prewordsets
             let euphonyindex = euphony alph bet gam del ep
-            euphonyindexgenerator (x ++ (sentence ++ "\t" ++ (show euphonyindex) ++ "\t" ++ (show alph) ++ "\t" ++ (show bet) ++ "\t" ++ (show del) ++ "\t" ++ (show ep) ++ "\n")) (y-1)
+            euphonyindexgenerator (x ++ (sentence ++ "\t" ++ (show euphonyindex) ++ "\t" ++ (show alph) ++ "\t" ++ (show bet) ++ "\t" ++ (show gam) ++ "\t" ++ (show del) ++ "\t" ++ (show ep) ++ "\n")) (y-1)
     else writeFile "EuphonyIndex-Generator/Projects/output3.txt" x
 
 main :: IO()
@@ -280,4 +280,4 @@ main = do
     putStr "E = "
     let euphonyindex = euphony alph bet gam del ep
     print $ euphonyindex 
-    --euphonyindexgenerator "sentence \t E \t alpha \t beta \t delta \t epsilon \n" 1000
+    --euphonyindexgenerator "sentence \t E \t alpha \t beta \t gamma \t delta \t epsilon \n" 1000
