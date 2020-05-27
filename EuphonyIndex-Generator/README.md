@@ -38,7 +38,6 @@
 
 ### 83.2241114 <= E <= 86.8780805
 
-|head|head|
 |:-:|:-:|
 |sentence | E |
 |glebecamcuiglcu bmeolebeogmulcl sguburscui rbeo um mbeogamsmse uicbmgalsceousls uileo mcumlceosubasgra mrarseoseo agsele cbagar usrsgeorscui rseoeor rglubg urcrbacgmergeceolamsuigls rcausls uima greoareolegeolrl lcucgceorbguisgsecl rsuigemubgcescuisuisuruilul smesacuiseoruirucgegeo rbeogeomeorsucgr es lbelmlbubl ugbebau cluisumabcse smucesuceomabele crseoermas uicblsuibrleouisubugucgb|86.8780805|
@@ -62,7 +61,6 @@
 
 ### E >= 99.1577117
 
-|head|head|
 |:-:|:-:|
 |sentence | E |
 |i ie a ie ae ae a a ae o ae ae o i i a i i o ae ie o a ie o ie i i ie o|99.90832439|
@@ -91,7 +89,6 @@
 
 ## 結果表(n=500)
 
-|head|head|
 |:-:|:-:|
 |sentence | E |
 |i ie a ie ae ae a a ae o ae ae o i i a i i o ae ie o a ie o ie i i ie o|99.90832439|
