@@ -9,6 +9,9 @@ randIO x y = randomRIO (x, y) :: IO Int
 fact 0 = 1
 fact n = fact(n-1) * n
 
+toInt :: (String -> Int)
+toInt x = read x ::Int
+
 {- 死骸、いつかのために残す
 select :: Int -> Int -> [Int] -> IO [Int]
 select range randrange selects = do
@@ -61,7 +64,7 @@ syl :: Int -> [String] -> IO [String]
 syl maxsyllable input = if (elem 'V' (input!!(length input - 1)) && elem 'C' (input!!(length input - 1))) || elem 'V' (input!!(length input -1)) then return input else sylgen maxsyllable []
 
 sylsets :: Int -> Int -> [String] -> IO [String]
-sylsets kinds maxsyllable void = if kinds > (fact maxsyllable)^2 then sylsets kinds (maxsyllable+1) void --maxsyllableの値が音節構造の組み合わせ未満のとき
+sylsets kinds maxsyllable void = if kinds >= maxsyllable then sylsets kinds (maxsyllable+1) void --maxsyllableの値が音節構造の組み合わせ未満のとき
     else do
         sylgen <- sylgen maxsyllable []
         if length void == kinds then return void
@@ -201,23 +204,36 @@ epsilon0 word void1 void2
 epsilon :: [String] -> Int
 epsilon word = epsilon0 (delta0 word []) 0 []
 
+{-
+
+    putStrLn "単語の種類？:"
+    syllable <- getLine 
+    let sylla = toInt syllable
+-}
 
 main :: IO()
 main = do
     putStrLn "母音一覧"
-    vowels <- vowels 8 ["a", "i", "u", "e", "o"] []
+    let vowel = ["a", "i", "u", "e", "o"]
+    vows <- randIO 1 (length vowel)
+    vowels <- vowels vows vowel []
     print $ vowels
     putStrLn "子音一覧"
-    consonants <- consonants 12 ["b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z"] []
+    let consonant = ["b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z"]
+    cons <- randIO 1 (length consonant)
+    consonants <- consonants cons consonant []
     print $ consonants
     putStrLn "音節構造一覧"
-    sylsets <- sylsets 10 4 []
+    kind <- randIO 3 6
+    max <- randIO 1 3
+    sylsets <- sylsets kind max []
     print $ sylsets
     putStrLn "単語の雛形(語の音節構造)"
     prewordgen <- prewordgen 3 sylsets []
     print $ prewordgen
     putStrLn "単語の雛形(語の音節構造)一覧"
-    prewordsets <- prewordsets 30 3 sylsets []
+    syllablerange <- randIO 1 6
+    prewordsets <- prewordsets 30 syllablerange  sylsets []
     print $ prewordsets
     putStrLn "単語"
     wordgen <- wordgen prewordgen vowels consonants []
