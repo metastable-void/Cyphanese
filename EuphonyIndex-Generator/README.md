@@ -38,8 +38,8 @@
 
 ### 83.2241114 <= E <= 86.8780805
 
-|:-:|:-:|
 |sentence | E |
+|:-:|:-:|
 |glebecamcuiglcu bmeolebeogmulcl sguburscui rbeo um mbeogamsmse uicbmgalsceousls uileo mcumlceosubasgra mrarseoseo agsele cbagar usrsgeorscui rseoeor rglubg urcrbacgmergeceolamsuigls rcausls uima greoareolegeolrl lcucgceorbguisgsecl rsuigemubgcescuisuisuruilul smesacuiseoruirucgegeo rbeogeomeorsucgr es lbelmlbubl ugbebau cluisumabcse smucesuceomabele crseoermas uicblsuibrleouisubugucgb|86.8780805|
 |uwasahuuncfatyutuft lrcajukxunaubatsaus mnatc zxrxwfibxuwuqic ujixchjskubrigkdifilsuc tfcfnsau amshjijaurnmucsmidk ywyuminpaug cpilauxiyhcazs infaut lgifrauxcdkdqgicha xqahqauhgi kfap fbupaujaufaulgzsmlu grhagukmas umxsbtgauyihbuhgdxu ykfaupak u uzcaz auktauydtriapubauma mxauqifuzadbsumg ihuqt amuqma lyibpadyaqcdta aumkywinacpmalkan bmhznfu autaulg it rtqauikaugzauda atxuladajrupigarqaus|86.38845301|
 |oebzaioewejce ozecoi oipoehqoepjwqozocq oeqoiwz oewepoeh hqeqtaicwebpaiwh aitoiqcewoihwehoh oiqoecoi oibhp cjezoezaihoi zwoeheq tpweoihoeqezwojecoijoiqb qbtaioeteoecezoip oebepwaip jtqoezejoitboij aicoecqaiwcoeaibjz oejoitoicqoec ohjecoi oteqocj jtaiqoiwewoizwophoqcoeq aijwoioec oeqbaiq btcoijtoezcqc aiqzjwcjzaitqce tjbo oiweboihzoeqaizoib wpophjt bwaib wjhaibaijwehoqaihtaitojzait pheejoe|86.22272904|
@@ -61,8 +61,8 @@
 
 ### E >= 99.1577117
 
-|:-:|:-:|
 |sentence | E |
+|:-:|:-:|
 |i ie a ie ae ae a a ae o ae ae o i i a i i o ae ie o a ie o ie i i ie o|99.90832439|
 |i ue ue i ea i ue ue i ue ue ue i ue ue ea ue i ue ea ea i ue i i ea ue i i i|99.89871574|
 |au u a a u ua u au au aa a u uu au auu u auu au uau aua au uu a auau aau au au u u aua|99.88237496|
@@ -89,8 +89,8 @@
 
 ## 結果表(n=500)
 
-|:-:|:-:|
 |sentence | E |
+|:-:|:-:|
 |i ie a ie ae ae a a ae o ae ae o i i a i i o ae ie o a ie o ie i i ie o|99.90832439|
 |i ue ue i ea i ue ue i ue ue ue i ue ue ea ue i ue ea ea i ue i i ea ue i i i|99.89871574|
 |au u a a u ua u au au aa a u uu au auu u auu au uau aua au uu a auau aau au au u u aua|99.88237496|
