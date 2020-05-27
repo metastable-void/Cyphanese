@@ -132,7 +132,7 @@ euphony alpha beta gamma delta epsilon
         e0 = euphony0 alpha beta gamma delta epsilon
 
 euphony0 :: Double -> Double -> Double -> Double -> Int -> Double
-euphony0 alpha beta gamma delta epsilon = 0.5 * (1 + (1 / (1 + exp (0.5*alpha - 7)))) * (100 / (1 + exp (-2.26*alpha - 0.08693*beta + 0.0112*gamma + 0.388*delta - 11.9)))
+euphony0 alpha beta gamma delta epsilon = 0.5 * (1 + (1 / (1 + exp (0.5*alpha - 7)))) * (100 / (1 + exp (-2.26*alpha - 0.0693*beta + 0.0112*gamma + 0.388*delta - 11.9)))
 
 wordsize :: [String] -> [Int] -> [Int]
 wordsize wordlist void
