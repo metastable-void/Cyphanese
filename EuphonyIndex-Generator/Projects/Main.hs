@@ -125,14 +125,14 @@ sentgen wordlist void
         | otherwise = sentgen (tail wordlist) ((head wordlist ++ " " ++ head void):init void)
 
 --ユーフォニー指数
-euphony :: Double -> Double -> Double -> Double -> Double -> Double
+euphony :: Double -> Double -> Double -> Double -> Int -> Double
 euphony alpha beta gamma delta epsilon
         | epsilon == 2 = -0.04*(e0**2) + 1.4*e0
         | otherwise = e0
     where
         e0 = euphony0 alpha beta gamma delta epsilon
 
-euphony0 :: Double -> Double -> Double -> Double -> Double -> Double
+euphony0 :: Double -> Double -> Double -> Double -> Int -> Double
 euphony0 alpha beta gamma delta epsilon = 0.5 * (1 + (1 / (1 + exp (0.5*alpha - 7)))) * (100 / (1 + exp (-2.26*alpha - 0.08693*beta + 0.0112*gamma + 0.388*delta - 11.9)))
 
 wordsize :: [String] -> [Int] -> [Int]
@@ -192,6 +192,16 @@ delta1 word void
 delta :: [String] -> Double
 delta syllablelist = (fromIntegral (delta1 (delta0 syllablelist []) 0)) / (fromIntegral (length (delta0 syllablelist [])))
 
+epsilon0 :: String -> Int -> [Int] -> Int
+epsilon0 word void1 void2
+    | length word == 0 = head (mode void2)
+    | head word == 'C' = epsilon0 (tail word) (void1+1) void2
+    | otherwise = epsilon0 (tail word) 0 (void1:void2)
+
+epsilon :: [String] -> Int
+epsilon word = epsilon0 (delta0 word []) 0 []
+
+
 main :: IO()
 main = do
     putStrLn "母音一覧"
@@ -231,3 +241,9 @@ main = do
     putStr "delta:"
     let del = 100 * (delta prewordsets)
     print $ del
+    putStr "epsilon:"
+    let ep = epsilon prewordsets
+    print $ ep
+    putStr "E = "
+    let euphonyindex = euphony alph bet gam del ep
+    print $ euphonyindex
