@@ -6,7 +6,9 @@
 
 ### テスト
 
-<script src="https://ideone.com/e.js/6ewE2A" type="text/javascript" ></script>
+ideone.comにもプログラムをアップロードした。下記リンクからideone.comに飛んでforkすることで実行可能である。
+
+[ideone.com EuphonyIndex-Generator](https://ideone.com/6ewE2A)
 
 ## 定義
 
