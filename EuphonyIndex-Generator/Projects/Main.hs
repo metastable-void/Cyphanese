@@ -1,6 +1,5 @@
 #! /usr/bin/env stack
 import System.Random
-import Control.Monad
 import qualified Data.List as L
 import qualified Data.Map as Map
 
@@ -163,15 +162,20 @@ beta0 wordlist consonants void
 beta :: [String] -> [String] -> Double
 beta wordlist consonants = (fromIntegral $ beta0 wordlist consonants []) / (fromIntegral $ length wordlist)
 
-{-
-gamma0 :: [String] -> [String] -> [String] -> [String] -> Int
-gamma0 wordlist consonants void1 void2
+gamma0 :: [String] -> [String] -> [String] -> Int -> Int -> Int 
+gamma0 wordlist consonants void1 void2 void3
     | length wordlist == 0 = length void1
-    | elem (head wordlist) ("s":[]) == False = gamma0 (tail wordlist) consonants (head wordlist) void2
-    | otherwise = case (head (head wordlist)) of
--}
-                        
+    | length (head wordlist) < 3 = gamma0 (tail wordlist) consonants void1 void2 void3
+    | elem (head wordlist) ("s":[]) == False = gamma0 (tail wordlist) consonants (void1 ++ ((head wordlist):[])) void2 void3
+    | otherwise = if ((head wordlist)!!void2) == 's' 
+                    then
+                        if ((head wordlist)!!(void2+1)) /= (head (consonants!!void3)) then gamma0 (tail wordlist) consonants void1 void2 (void3+1)
+                           else if ((head wordlist)!!(void2+2)) == 'r' || ((head wordlist)!!(void2+2)) == 'l' || ((head wordlist)!!(void2+2)) == 'h' then gamma0 (tail wordlist) consonants void1 0 0
+                                else gamma0 (tail wordlist) consonants  (void1 ++ (head wordlist):[]) 0 0
+                    else gamma0 wordlist consonants void1 (void2+1) void3
     
+gamma :: [String] -> [String] -> Double
+gamma wordlist consonants = (fromIntegral ((beta0 wordlist consonants []) * (gamma0 wordlist consonants [] 0 0)) / (fromIntegral $ length wordlist))
 
 main :: IO()
 main = do
@@ -206,3 +210,6 @@ main = do
     putStr "beta:"
     let bet = beta wordsets consonants
     print $ bet
+    putStr "gamma:"
+    let gam = gamma wordsets consonants
+    print $ gam
