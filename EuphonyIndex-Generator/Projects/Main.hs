@@ -9,9 +9,6 @@ randIO x y = randomRIO (x, y) :: IO Int
 fact 0 = 1
 fact n = fact(n-1) * n
 
-toInt :: (String -> Int)
-toInt x = read x ::Int
-
 {- 死骸、いつかのために残す
 select :: Int -> Int -> [Int] -> IO [Int]
 select range randrange selects = do
@@ -121,9 +118,9 @@ wordsets prewords vowel consonant void =
             wordsets prewords vowel consonant (void ++ wordgen)
 
 --文の生成
-sentgen :: [String] -> [String] -> [String]
+sentgen :: [String] -> [String] -> String
 sentgen wordlist void
-        | length wordlist == 0 = void
+        | length wordlist == 0 = head void
         | length void == 0 = sentgen (tail wordlist) ((head wordlist):void)
         | otherwise = sentgen (tail wordlist) ((head wordlist ++ " " ++ head void):init void)
 
@@ -211,6 +208,34 @@ epsilon word = epsilon0 (delta0 word []) 0 []
     let sylla = toInt syllable
 -}
 
+euphonyindexgenerator :: String -> Int -> IO()
+euphonyindexgenerator x y =
+    if y /= 0
+        then do
+            let vowel = ["a", "i", "u", "e", "o"]
+            vows <- randIO 1 (length vowel)
+            vowels <- vowels vows vowel []
+            let consonant = ["b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z"]
+            cons <- randIO 1 (length consonant)
+            consonants <- consonants cons consonant []
+            kind <- randIO 3 6
+            max <- randIO 1 3
+            sylsets <- sylsets kind max []
+            prewordgen <- prewordgen 3 sylsets []
+            syllablerange <- randIO 1 6
+            prewordsets <- prewordsets 30 syllablerange  sylsets []
+            wordgen <- wordgen prewordgen vowels consonants []
+            wordsets <- wordsets prewordsets vowels consonants []
+            let sentence = sentgen wordsets []
+            let alph = alpha wordsets
+            let bet = 100 * (beta wordsets consonants)
+            let gam = 100 * (gamma wordsets consonants)
+            let del = 100 * (delta prewordsets)
+            let ep = epsilon prewordsets
+            let euphonyindex = euphony alph bet gam del ep
+            euphonyindexgenerator (x ++ ("sentence : " ++ sentence ++ "\n" ++ "E = " ++ (show euphonyindex) ++ "\n \n")) (y-1)
+    else writeFile "EuphonyIndex-Generator/Projects/output.txt" x
+
 main :: IO()
 main = do
     putStrLn "母音一覧"
@@ -262,4 +287,5 @@ main = do
     print $ ep
     putStr "E = "
     let euphonyindex = euphony alph bet gam del ep
-    print $ euphonyindex
+    print $ euphonyindex 
+    -- euphonyindexgenerator "" 30
