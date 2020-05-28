@@ -200,6 +200,40 @@ epsilon0 word void1 void2
 epsilon :: [String] -> Int
 epsilon word = epsilon0 (delta0 word []) 0 []
 
+--自然言語処理
+natural :: String -> [String] -> [String] -> String -> String
+natural sentence vowels consonants void
+    | length sentence == 0 = void
+    | elem ((head sentence):[]) vowels == True = natural (tail sentence) vowels consonants (void ++ "V")
+    | elem ((head sentence):[]) consonants == True = natural (tail sentence) vowels consonants (void ++ "C")
+    | otherwise = natural (tail sentence) vowels consonants (void ++ " ")
+
+naturallist :: String -> [String] -> [String] -> String -> [String] -> [String]
+naturallist sentence vowels consonants void1 void2 
+    | length sentence == 0 = (void2 ++ (void1:[]))
+    | elem ((head sentence):[]) vowels == True = naturallist (tail sentence) vowels consonants (void1 ++ ((head sentence):[])) void2
+    | elem ((head sentence):[]) consonants == True = naturallist (tail sentence) vowels consonants (void1 ++ ((head sentence):[])) void2
+    | otherwise = naturallist (tail sentence) vowels consonants "" (void2 ++ (void1:[]))
+
+{-
+prenatural :: [String] -> [String] -> [String] -> String -> [String] -> [String]
+prenatural sentence vowels consonants void1 void2 
+    | length (head sentence) == 0 = (void2 ++ (void1:[]))
+    | elem ((head (head sentence)):[]) vowels == True = prenatural ((tail (head sentence)):(tail sentence)) vowels consonants (void1 ++ (head vowels)) void2
+    | elem ((head (head sentence)):[]) consonants == True = prenatural ((tail (head sentence)):(tail sentence)) vowels consonants (void1 ++ (head consonants)) void2
+    | otherwise = prenatural ((tail (head sentence)):(tail sentence)) vowels consonants "" (void2 ++ (void1:[]))
+-}
+
+prenatural :: String -> [String] -> [String]
+prenatural prewords void
+    | length prewords == 0 = void
+    | length void == 0 = case head prewords of
+                            'C' -> prenatural (tail prewords) ("C":void)
+                            'V' -> prenatural (tail prewords) ("C":void)
+    | head prewords == 'C' = prenatural (tail prewords) (void ++ (((head void) ++ "C"):[]))
+    | head prewords == 'V' = prenatural (tail prewords) (void ++ (((head void) ++ "V"):[]))
+    | otherwise = prenatural (tail prewords) void
+
 euphonyindexgenerator :: String -> Int -> IO()
 euphonyindexgenerator x y =
     if y /= 0
@@ -230,6 +264,42 @@ euphonyindexgenerator x y =
 
 main :: IO()
 main = do
+    putStrLn "入力："
+    input <- getLine
+    let vowel = ["a", "i", "u", "e", "o"]
+    let consonant = ["b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z"]
+    let nat = natural input vowel consonant ""
+    let natwordset = naturallist input vowel consonant "" []
+    let pre = L.words nat 
+    print nat
+    print natwordset
+    print pre
+    putStrLn "母音表"
+    print vowel
+    putStrLn "子音表"
+    print $ consonant
+    putStrLn "ユーフォニー指数(Euphony Index;)"
+    putStr "alpha:"
+    let alph = alpha natwordset
+    print $ alph
+    putStr "beta:"
+    let bet = 100 * (beta natwordset consonant)
+    print $ bet
+    putStr "gamma:"
+    let gam = 100 * (gamma natwordset consonant)
+    print $ gam
+    putStr "delta:"
+    let del = 100 * (delta pre)
+    print $ del
+    putStr "epsilon:"
+    let ep = epsilon pre
+    print $ ep
+    putStr "E = "
+    let euphonyindex = euphony alph bet gam del ep
+    print $ euphonyindex 
+
+
+    {-
     putStrLn "母音一覧"
     let vowel = ["a", "i", "u", "e", "o"]
     vows <- randIO 1 (length vowel)
@@ -280,4 +350,5 @@ main = do
     putStr "E = "
     let euphonyindex = euphony alph bet gam del ep
     print $ euphonyindex 
+    -}
     --euphonyindexgenerator "sentence \t E \t alpha \t beta \t gamma \t delta \t epsilon \n" 1000
