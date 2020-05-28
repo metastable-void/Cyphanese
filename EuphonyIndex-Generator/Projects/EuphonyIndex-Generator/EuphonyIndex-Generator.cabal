@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: b28b90e2e655771d2b3a6d6232b32b89e48c0ad81b9dbb975c6e706e938c6315
+-- hash: e017555d9a4689d0c9e87b729dfdd94e4a666813a9c31fc236582241b08d82a3
 
 name:           EuphonyIndex-Generator
 version:        0.1.0.0
@@ -27,7 +27,7 @@ library
       src
   build-depends:
       base >=4.7 && <5
-    , containers >=0.6.2
+    , containers >=0.6.0
     , random >=1.1
     , unicode-show >=0.1.0.4 && <0.2
   default-language: Haskell2010
@@ -42,7 +42,7 @@ executable euphony
   build-depends:
       EuphonyIndex-Generator
     , base >=4.7 && <5
-    , containers >=0.6.2
+    , containers >=0.6.0
     , random >=1.1
     , unicode-show >=0.1.0.4 && <0.2
   default-language: Haskell2010
@@ -58,7 +58,7 @@ test-suite EuphonyIndex-Generator-test
   build-depends:
       EuphonyIndex-Generator
     , base >=4.7 && <5
-    , containers >=0.6.2
+    , containers >=0.6.0
     , random >=1.1
     , unicode-show >=0.1.0.4 && <0.2
   default-language: Haskell2010

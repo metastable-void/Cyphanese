@@ -21,7 +21,7 @@ description: ""
 dependencies:
 - base >= 4.7 && < 5
 - random >= 1.1
-- containers >= 0.6.2
+- containers >= 0.6.0
 - unicode-show >= 0.1.0.4 && < 0.2
 
 library:
