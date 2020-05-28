@@ -1,6 +1,7 @@
 #! /usr/bin/env stack
 module Main where
 
+import System.IO
 import System.Random
 import qualified Data.List as L
 import qualified Data.Map as Map
@@ -263,6 +264,7 @@ euphonyindexgenerator x y =
 
 main :: IO()
 main = do
+    hSetBinaryMode stdout True
     putStrLn "文："
     input <- getLine
     putStrLn "母音表(空白区切り)："
