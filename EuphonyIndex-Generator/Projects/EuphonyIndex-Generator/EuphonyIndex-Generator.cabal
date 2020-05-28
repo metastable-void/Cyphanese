@@ -4,26 +4,19 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: c783b0f551eba75c7c3c8cb4ba573e5261f299a0befe2d1153ece408fbad873c
+-- hash: 12332e1ef26f9bc55e3d6eb9e2541d063a2fc21631ad89669148084ca8c00041
 
 name:           EuphonyIndex-Generator
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/githubuser/EuphonyIndex-Generator#readme>
-homepage:       https://github.com/githubuser/EuphonyIndex-Generator#readme
-bug-reports:    https://github.com/githubuser/EuphonyIndex-Generator/issues
 author:         Author name here
 maintainer:     example@example.com
 copyright:      2020 Author name here
-license:        BSD3
+license:        GPL-3
 license-file:   LICENSE
 build-type:     Simple
 extra-source-files:
     README.md
     ChangeLog.md
-
-source-repository head
-  type: git
-  location: https://github.com/githubuser/EuphonyIndex-Generator
 
 library
   exposed-modules:
@@ -36,6 +29,7 @@ library
       base >=4.7 && <5
     , containers >=0.6.2
     , random >=1.1
+    , unicode >=0.1.0.4 && <0.2
   default-language: Haskell2010
 
 executable euphony
@@ -50,6 +44,7 @@ executable euphony
     , base >=4.7 && <5
     , containers >=0.6.2
     , random >=1.1
+    , unicode-show >=0.1.0.4 && <0.2
   default-language: Haskell2010
 
 test-suite EuphonyIndex-Generator-test
@@ -65,4 +60,5 @@ test-suite EuphonyIndex-Generator-test
     , base >=4.7 && <5
     , containers >=0.6.2
     , random >=1.1
+    , unicode >=0.1.0.4 && <0.2
   default-language: Haskell2010
