@@ -2,6 +2,7 @@
 module Main where
 
 import System.IO
+import GHC.IO.Encoding (utf8)
 import System.Random
 import qualified Data.List as L
 import qualified Data.Map as Map
@@ -265,11 +266,12 @@ euphonyindexgenerator x y =
 main :: IO()
 main = do
     hSetBinaryMode stdout True
-    putStrLn "文："
+    hSetEncoding stdout utf8
+    putStrLn "文: "
     input <- getLine
-    putStrLn "母音表(空白区切り)："
+    putStrLn "母音表(空白区切り): "
     input2 <- getLine
-    putStrLn "子音表(空白区切り)："
+    putStrLn "子音表(空白区切り): "
     input3 <- getLine
     let vowel = L.words input2
     let consonant = L.words input3
