@@ -160,6 +160,7 @@ alpha wordlist = mean (map fromIntegral $ wordsize wordlist [])
 beta0 :: [String] -> [String] -> Int
 beta0 prewordlist void
     | length prewordlist == 0 = length void
+    | length (head prewordlist) == 1 = beta0 (tail prewordlist) void
     | ((head prewordlist)!!0) == 'C' && ((head prewordlist)!!1) == 'C' = beta0 (tail prewordlist) ((head prewordlist):void)
     | otherwise = beta0 (tail prewordlist) void
 
@@ -209,13 +210,15 @@ epsilon word = epsilon0 (delta0 word []) 0 []
 natural :: String -> [String] -> [String] -> String -> String -> String
 natural sentence vowels consonants void1 void2
     | length sentence == 0 = void2
-    | (head sentence) == ' ' && length void1 /= 0 && elem 'C' void1 = natural (tail sentence) vowels consonants "" (void2 ++ "C" ++ " ")
-    | (head sentence) == ' ' && length void1 /= 0 && elem 'V' void1 = natural (tail sentence) vowels consonants "" (void2 ++ "V" ++ " ")
+    | (head sentence) == ' ' && elem 'C' void1 = natural (tail sentence) vowels consonants "" (void2 ++ "C" ++ " ")
+    | (head sentence) == ' ' && elem 'V' void1 = natural (tail sentence) vowels consonants "" (void2 ++ "V" ++ " ")
     | (head sentence) == ' ' = natural (tail sentence) vowels consonants "" (void2 ++ " ")
+    | elem ((head sentence):[]) vowels == True = natural (tail sentence) vowels consonants "" (void2 ++ "V")
+    | elem ((head sentence):[]) consonants == True = natural (tail sentence) vowels consonants "" (void2 ++ "C")
     | elem (void1 ++ ((head sentence):[])) consonants == True = natural (tail sentence) vowels consonants "" (void2 ++ "C")
     | elem (void1 ++ ((head sentence):[])) vowels == True = natural (tail sentence) vowels consonants "" (void2 ++ "V")
-    | elem ((head sentence):[]) consonants == False = natural (tail sentence) vowels consonants (void1 ++ ((head sentence):[])) void2
     | elem ((head sentence):[]) vowels == False = natural (tail sentence) vowels consonants (void1 ++ ((head sentence):[])) void2
+    | elem ((head sentence):[]) consonants == False = natural (tail sentence) vowels consonants (void1 ++ ((head sentence):[])) void2
     | otherwise = natural (tail sentence) vowels consonants "" (void2 ++ "?")
 
 naturallist :: String -> [String] -> [String] -> String -> [String] -> [String]
