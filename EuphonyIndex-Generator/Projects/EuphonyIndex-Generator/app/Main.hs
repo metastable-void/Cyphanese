@@ -303,6 +303,7 @@ main = do
     putStr "E = "
     let euphonyindex = euphony alph bet gam del ep
     print $ euphonyindex 
+    a <- getLine
 
     {-
     putStrLn "母音一覧"
