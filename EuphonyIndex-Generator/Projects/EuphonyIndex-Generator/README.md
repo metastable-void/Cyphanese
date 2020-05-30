@@ -1,1 +1,0 @@
-# EuphonyIndex-Generator
