@@ -1,8 +1,3 @@
----
-home: true
-footer: GPLv3.0 LICENSED | Copyright (c) 2020 Viterum
----
-
 # Cyphanese_Secure-StrictSyntax-Language-for-JapaneseSpeakers
 
 **製作中**
