@@ -293,21 +293,17 @@ main = do
     hSetEncoding stdout utf8
     putStrLn "文: "
     input <- getLine
-    putStrLn "母音表(空白区切り): "
     input2 <- readFile("src/IPA-vowels/vowels-supply.txt")
     input3 <- readFile("src/IPA-vowels/syllablic-consonants.txt")
-    putStrLn "子音表(空白区切り): "
-    input4 <- ipagenIO 
-    let vowel = (L.words input2) ++ (L.words input3)
-    let consonant = input4
+    input4 <- readFile("src/IPA-vowels/long-vowels.txt")
+    input5 <- ipagenIO 
+    let vowel = (L.words input2) ++ (L.words input3) ++ (L.words input4)
+    let consonant = input5
     let nat = natural input vowel consonant "" ""
     let natwordset = naturallist input vowel consonant "" []
     let pre = L.words nat 
+    putStrLn "音節構造: "
     print pre
-    putStrLn "母音表"
-    uprint vowel
-    putStrLn "子音表"
-    uprint $ consonant
     putStrLn "ユーフォニー指数(Euphony Index;)"
     putStr "alpha:"
     let alph = alpha natwordset
