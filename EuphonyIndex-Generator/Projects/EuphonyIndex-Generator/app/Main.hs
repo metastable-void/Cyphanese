@@ -306,7 +306,7 @@ main = do
     print pre
     putStrLn "ユーフォニー指数(Euphony Index;)"
     putStr "alpha:"
-    let alph = alpha natwordset
+    let alph = alpha pre
     print $ alph
     putStr "beta:"
     let bet = 100 * (beta pre)
