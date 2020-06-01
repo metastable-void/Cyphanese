@@ -235,7 +235,7 @@ ipagen0 :: [String] -> String -> Int -> Int -> [String]
 ipagen0 ipa supply void ipalength
     | ipalength == 0 = ipagen0 ipa supply void (length ipa)
     | void == ipalength = ipa
-    | otherwise = ipagen0 (ipa ++ (((ipa!!void) ++ ((last supply):[])):[])) supply (void+1) ipalength
+    | otherwise = ipagen0 ((tail ipa) ++ (((head ipa) ++ ((last supply):[])):[])) supply (void+1) ipalength
 
 ipagen :: [String] -> [String] -> Int -> [String] -> [String]
 ipagen ipa supply void output--IPAと補助記号を引数に取ると全組み合わせ作ってくれる
@@ -274,11 +274,19 @@ euphonyindexgenerator x y =
 
 ipagenIO :: IO()
 ipagenIO = do
-    input <- readFile ("src/IPA-consonants/" ++ a ++ ".txt")
-    let ipavow = L.words input
-    let supply = L.lines input2
-    let supplyvow = L.unwords (ipagen ipavow supply 0 [])
-    writeFile ("src/IPA-consonants/syllablic-consonants.txt") supplyvow
+    input <- readFile ("src/IPA-consonants/affricates-supply.txt")
+    input2 <- readFile ("src/IPA-consonants/approximants-supply.txt")
+    input3 <- readFile ("src/IPA-consonants/clicks-supply.txt")
+    input4 <- readFile ("src/IPA-consonants/ejectives-supply.txt")
+    input5 <- readFile ("src/IPA-consonants/flaps-supply.txt")
+    input6 <- readFile ("src/IPA-consonants/fricatives-supply.txt")
+    input7 <- readFile ("src/IPA-consonants/implosives-supply.txt")
+    input8 <- readFile ("src/IPA-consonants/nasals-supply.txt")
+    input9 <- readFile ("src/IPA-consonants/plosives-supply.txt")
+    input10 <- readFile ("src/IPA-consonants/trills-supply.txt")
+    let ipavow = (L.words input) ++ (L.words input2) ++ (L.words input3) ++ (L.words input4) ++ (L.words input5) ++ (L.words input6) ++ (L.words input7) ++ (L.words input8) ++ (L.words input9) ++ (L.words input10)
+    let supplyvow = L.unwords (ipagen ipavow ["◌̩"] 0 [])
+    writeFile ("src/IPA-vowels/syllablic-consonants.txt") supplyvow
 
 main :: IO()
 main = do
