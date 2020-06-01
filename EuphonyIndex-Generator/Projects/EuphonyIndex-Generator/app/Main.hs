@@ -215,6 +215,8 @@ natural sentence vowels consonants void1 void2
     | (head sentence) == ' ' = natural (tail sentence) vowels consonants "" (void2 ++ " ")
     | elem ((head sentence):[]) vowels == True = natural (tail sentence) vowels consonants "" (void2 ++ "V")
     | elem ((head sentence):[]) consonants == True = natural (tail sentence) vowels consonants "" (void2 ++ "C")
+    | elem (void1 ++ ((head sentence):[])) consonants && elem (void1 ++ ((head sentence):[]) ++ ((sentence!!1):[])) consonants == True = natural (tail sentence) vowels consonants "" (void2 ++ "C")
+    | elem (void1 ++ ((head sentence):[])) vowels && elem (void1 ++ ((head sentence):[]) ++ ((sentence!!1):[])) vowels == True = natural (tail sentence) vowels consonants "" (void2 ++ "V")
     | elem (void1 ++ ((head sentence):[])) consonants == True = natural (tail sentence) vowels consonants "" (void2 ++ "C")
     | elem (void1 ++ ((head sentence):[])) vowels == True = natural (tail sentence) vowels consonants "" (void2 ++ "V")
     | elem ((head sentence):[]) vowels == False = natural (tail sentence) vowels consonants (void1 ++ ((head sentence):[])) void2
@@ -228,14 +230,17 @@ naturallist sentence vowels consonants void1 void2
     | elem ((head sentence):[]) consonants == True = naturallist (tail sentence) vowels consonants (void1 ++ ((head sentence):[])) void2
     | otherwise = naturallist (tail sentence) vowels consonants "" (void2 ++ (void1:[]))
 
-{-
-prenatural :: [String] -> [String] -> [String] -> String -> [String] -> [String]
-prenatural sentence vowels consonants void1 void2 
-    | length (head sentence) == 0 = (void2 ++ (void1:[]))
-    | elem ((head (head sentence)):[]) vowels == True = prenatural ((tail (head sentence)):(tail sentence)) vowels consonants (void1 ++ (head vowels)) void2
-    | elem ((head (head sentence)):[]) consonants == True = prenatural ((tail (head sentence)):(tail sentence)) vowels consonants (void1 ++ (head consonants)) void2
-    | otherwise = prenatural ((tail (head sentence)):(tail sentence)) vowels consonants "" (void2 ++ (void1:[]))
--}
+--IPAfile生成器
+ipagen0 :: [String] -> String -> Int -> Int -> [String]
+ipagen0 ipa supply void ipalength
+    | ipalength == 0 = ipagen0 ipa supply void (length ipa)
+    | void == ipalength = ipa
+    | otherwise = ipagen0 (ipa ++ (((ipa!!void) ++ ((last supply):[])):[])) supply (void+1) ipalength
+
+ipagen :: [String] -> [String] -> Int -> [String] -> [String]
+ipagen ipa supply void output--IPAと補助記号を引数に取ると全組み合わせ作ってくれる
+    | void == length supply = output
+    | otherwise = ipagen ipa supply (void+1) (output ++ (ipagen0 ipa (supply!!void) 0 0))
 
 {-
 euphonyindexgenerator :: String -> Int -> IO()
@@ -267,8 +272,17 @@ euphonyindexgenerator x y =
     else writeFile "EuphonyIndex-Generator/Projects/output3.txt" x
 -}
 
+ipagenIO :: IO()
+ipagenIO = do
+    input <- readFile ("src/IPA-consonants/" ++ a ++ ".txt")
+    let ipavow = L.words input
+    let supply = L.lines input2
+    let supplyvow = L.unwords (ipagen ipavow supply 0 [])
+    writeFile ("src/IPA-consonants/syllablic-consonants.txt") supplyvow
+
 main :: IO()
 main = do
+    {-
     hSetBinaryMode stdout True
     hSetEncoding stdout utf8
     putStrLn "文: "
@@ -305,7 +319,8 @@ main = do
     print $ ep
     putStr "E = "
     let euphonyindex = euphony alph bet gam del ep
-    print $ euphonyindex 
+    -}
+    ipagenIO
 
     {-
     putStrLn "母音一覧"
