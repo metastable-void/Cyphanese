@@ -272,7 +272,7 @@ euphonyindexgenerator x y =
     else writeFile "EuphonyIndex-Generator/Projects/output3.txt" x
 -}
 
-ipagenIO :: IO()
+ipagenIO :: IO [String]
 ipagenIO = do
     input <- readFile ("src/IPA-consonants/affricates-supply.txt")
     input2 <- readFile ("src/IPA-consonants/approximants-supply.txt")
@@ -284,23 +284,22 @@ ipagenIO = do
     input8 <- readFile ("src/IPA-consonants/nasals-supply.txt")
     input9 <- readFile ("src/IPA-consonants/plosives-supply.txt")
     input10 <- readFile ("src/IPA-consonants/trills-supply.txt")
-    let ipavow = (L.words input) ++ (L.words input2) ++ (L.words input3) ++ (L.words input4) ++ (L.words input5) ++ (L.words input6) ++ (L.words input7) ++ (L.words input8) ++ (L.words input9) ++ (L.words input10)
-    let supplyvow = L.unwords (ipagen ipavow ["◌̩"] 0 [])
-    writeFile ("src/IPA-vowels/syllablic-consonants.txt") supplyvow
+    let consonants = (L.words input) ++ (L.words input2) ++ (L.words input3) ++ (L.words input4) ++ (L.words input5) ++ (L.words input6) ++ (L.words input7) ++ (L.words input8) ++ (L.words input9) ++ (L.words input10)
+    return consonants
 
 main :: IO()
 main = do
-    {-
     hSetBinaryMode stdout True
     hSetEncoding stdout utf8
     putStrLn "文: "
     input <- getLine
     putStrLn "母音表(空白区切り): "
-    input2 <- getLine
+    input2 <- readFile("src/IPA-vowels/vowels-supply.txt")
+    input3 <- readFile("src/IPA-vowels/syllablic-consonants.txt")
     putStrLn "子音表(空白区切り): "
-    input3 <- getLine
-    let vowel = L.words input2
-    let consonant = L.words input3
+    input4 <- ipagenIO 
+    let vowel = (L.words input2) ++ (L.words input3)
+    let consonant = input4
     let nat = natural input vowel consonant "" ""
     let natwordset = naturallist input vowel consonant "" []
     let pre = L.words nat 
@@ -327,8 +326,7 @@ main = do
     print $ ep
     putStr "E = "
     let euphonyindex = euphony alph bet gam del ep
-    -}
-    ipagenIO
+    print $ euphonyindex
 
     {-
     putStrLn "母音一覧"
