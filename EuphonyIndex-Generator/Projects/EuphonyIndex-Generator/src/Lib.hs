@@ -208,6 +208,11 @@ epsilon0 word void1 void2
 epsilon :: [String] -> Int
 epsilon word = epsilon0 (delta0 word []) 0 []
 
+zeta0 :: String -> Int 
+zeta0 word
+    | (head word) == 'C' = 0
+    | otherwise = 1 --語頭に
+
 --自然言語処理
 natural :: String -> [String] -> [String] -> String -> String -> String
 natural sentence vowels consonants void1 void2
@@ -279,17 +284,17 @@ euphonyindexgenerator1 path = do
     let del = 100 * (delta prewordsets)
     let ep = epsilon prewordsets
     let euphonyindex = euphony alph bet gam del ep
-    appendFile path (sentence ++ "\t" ++ (show euphonyindex) ++ "\t" ++ (show alph) ++ "\t" ++ (show bet) ++ "\t" ++ (show gam) ++ "\t" ++ (show del) ++ "\t" ++ (show ep) ++ "\n")
+    appendFile path (sentence ++ "\t" ++ (show euphonyindex) ++ "\t" ++ (show alph) ++ "\t" ++ (show bet) ++ "\t" ++ (show gam) ++ "\t" ++ (show del) ++ "\t" ++ (show ep) ++ "\t 0" ++ "\r\n")
 
 euphonyindexgenerator0 :: String -> String -> Int -> Int -> IO()
 euphonyindexgenerator0 header path x x2
     | x == x2 = do
-        euphonyindexgenerator0 header path x (x2+1)
         appendFile path header
-    | x == 0 = appendFile path "\n"
+        euphonyindexgenerator0 header path x (x2+1)
+    | x == 0 = appendFile path "\r\n"
     | otherwise = do
-        euphonyindexgenerator0 header path (x-1) x2
         euphonyindexgenerator1 path
+        euphonyindexgenerator0 header path (x-1) x2
 
 euphonyindexgenerator :: String -> String -> Int -> IO()
 euphonyindexgenerator header path x = euphonyindexgenerator0 header path x x 
@@ -314,7 +319,7 @@ someFunc = do
     hSetBinaryMode stdout True
     hSetEncoding stdout utf8
     --euphonyindexgenerator "" 1
-    {- 
+
     putStrLn "文: "
     input <- getLine
     input2 <- readFile("src/IPA-vowels/vowels-supply.txt")
@@ -346,9 +351,10 @@ someFunc = do
     print $ ep
     putStr "E = "
     let euphonyindex = euphony alph bet gam del ep
+    --appendFile "asIPAnatural.txt" (input ++ "\t" ++ (show euphonyindex) ++ "\t" ++ (show alph) ++ "\t" ++ (show bet) ++ "\t" ++ (show gam) ++ "\t" ++ (show del) ++ "\t" ++ (show ep) ++ "\t 1" ++ "\r\n")
     print $ euphonyindex
-    -}
-    
+
+    {-
     input1 <- readFile("src/IPA-vowels/vowels.txt")
     input3 <- readFile("src/IPA-vowels/long-vowels.txt")
     let vowel = (L.words input1) ++ (L.words input3)
@@ -409,3 +415,4 @@ someFunc = do
     print $ euphonyindex 
     --euphonyindexgenerator "sentence \t E \t alpha \t beta \t gamma \t delta \t epsilon \n" 500
     euphonyindexgenerator "" "./asIPA1.txt" 50
+    -}
